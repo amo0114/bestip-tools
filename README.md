@@ -90,9 +90,8 @@
 - 感谢 [epeius](https://github.com/cmliu/epeius)的[CMLiussss](https://github.com/cmliu)和贡献者，他们提供了宝贵的代码和指导。
 - 特别感谢 [cmliu/CF-Workers-TEXT2KV](https://github.com/cmliu/CF-Workers-TEXT2KV)，它们为本项目的实现提供了重要的支持。
 - 感谢社区成员提供的反馈和建议，它们帮助我们不断改进和优化项目
-- ## Stargazers over time
-[![Stargazers over time](https://starchart.cc/amo0114/bestip-tools.svg?variant=adaptive)](https://starchart.cc/amo0114/bestip-tools)
 
-## Star History
+
+- ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=amo0114/bestip-tools&type=Date)](https://star-history.com/#amo0114/bestip-tools&Date)
