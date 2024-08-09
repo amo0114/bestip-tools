@@ -18,8 +18,8 @@ LOG_FILE="script.log"
 REGISTER_CODE="your_register_code_here"
 
 # Telegram Bot 配置
-BOT_TOKEN="7185256551:AAF1Gvln7HLpWn0wZRAWe6emFBGkQx5XEmE"
-CHAT_ID="6029904260"
+BOT_TOKEN=""
+CHAT_ID=""
 
 # 打印 MoYuan ASCII 艺术到控制台
 generate_moyuan_art() {
