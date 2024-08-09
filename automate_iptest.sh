@@ -1,26 +1,28 @@
 #!/bin/bash
 
 # 定义目标目录和可执行文件
-TARGET_DIR="" # 脚本目录
-EXECUTABLE="./iptest_linux_amd64" # best IP可执行文件
+TARGET_DIR="/root/bestip/iptest_build"
+EXECUTABLE="./iptest_linux_amd64"
 
 # 定义机场代码文件
-IATA_CODES_FILE="iata_codes.txt" # 机场代码文件
+IATA_CODES_FILE="iata_codes.txt"
 
 # 定义结果目录和更新脚本
 RESULT_DIR="result"
 UPDATE_SCRIPT="$RESULT_DIR/update.sh"
 
 # 定义日志文件
-LOG_FILE="script.log" # 脚本执行日志文件
+LOG_FILE="script.log"
+
+# 定义注册码
+REGISTER_CODE="your_register_code_here"
 
 # Telegram Bot 配置
-BOT_TOKEN="" # Telegram Bot Token 可在@BotFather创建
-CHAT_ID="" # 群组或用户ID，可在@userinfobot获取
+BOT_TOKEN="7185256551:AAF1Gvln7HLpWn0wZRAWe6emFBGkQx5XEmE"
+CHAT_ID="6029904260"
 
 # 打印 MoYuan ASCII 艺术到控制台
 generate_moyuan_art() {
-    # 使用 heredoc 打印 ASCII 艺术
     cat <<'EOF'
  .----------------. .----------------. .----------------. .----------------. .----------------. .-----------------.
 | .--------------. | .--------------. | .--------------. | .--------------. | .--------------. | .--------------. |
@@ -54,7 +56,16 @@ cd "$TARGET_DIR" || { echo "Failed to change directory to $TARGET_DIR"; exit 1; 
 # 逐行读取机场代码文件并执行命令
 while IFS= read -r IATA_CODE; do
     echo "输入: 0 0 $IATA_CODE" | tee -a "$LOG_FILE"
-    echo "0 0 $IATA_CODE" | $EXECUTABLE >> "$LOG_FILE" 2>&1
+    
+    # 执行可执行文件并检查是否提示输入注册码
+    output=$(echo "0 0 $IATA_CODE" | $EXECUTABLE 2>&1)
+    echo "$output" >> "$LOG_FILE"
+    
+    if echo "$output" | grep -q "输入注册码"; then
+        echo "检测到输入注册码提示，正在输入注册码..." | tee -a "$LOG_FILE"
+        echo "$REGISTER_CODE" | $EXECUTABLE >> "$LOG_FILE" 2>&1
+    fi
+    
     echo "完成: 0 0 $IATA_CODE" | tee -a "$LOG_FILE"
     echo "" | tee -a "$LOG_FILE"
 
@@ -71,6 +82,7 @@ while IFS= read -r IATA_CODE; do
 done < "$IATA_CODES_FILE"
 
 echo "所有操作完成。" | tee -a "$LOG_FILE"
+
 # 发送更新成功消息和日志文件到 Telegram
 send_to_telegram() {
     local message="$1"
@@ -100,4 +112,4 @@ send_to_telegram() {
     fi
 }
 
-send_to_telegram "CF_torjan 订阅更新成功 - MoYuan\n更新数据完成" "$LOG_FILE" # telegram通知信息，可随意更改
+send_to_telegram "CF_torjan 订阅更新成功 - MoYuan\n更新数据完成" "$LOG_FILE"
