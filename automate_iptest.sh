@@ -15,7 +15,7 @@ UPDATE_SCRIPT="$RESULT_DIR/update.sh"
 LOG_FILE="script.log"
 
 # 定义注册码
-REGISTER_CODE="your_register_code_here"
+REGISTER_CODE=""
 
 # Telegram Bot 配置
 BOT_TOKEN=""
@@ -57,8 +57,11 @@ cd "$TARGET_DIR" || { echo "Failed to change directory to $TARGET_DIR"; exit 1; 
 while IFS= read -r IATA_CODE; do
     echo "输入: 0 0 $IATA_CODE" | tee -a "$LOG_FILE"
     
-    # 执行可执行文件并检查是否提示输入注册码
-    output=$(echo "0 0 $IATA_CODE" | $EXECUTABLE 2>&1)
+    # 使用 timeout 限制命令运行时间为15分钟
+    if ! output=$(timeout 900s echo "0 0 $IATA_CODE" | $EXECUTABLE 2>&1); then
+        echo "命令执行失败或超时，退出脚本" | tee -a "$LOG_FILE"
+        exit 1
+    fi
     echo "$output" >> "$LOG_FILE"
     
     if echo "$output" | grep -q "输入注册码"; then
