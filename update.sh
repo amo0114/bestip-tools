@@ -17,12 +17,13 @@ BASENAME=$(basename "$FILENAME")
 # Base64 编码文件内容
 BASE64_TEXT=$(head -n 65 "$FILENAME" | base64 -w 0)
 
-# 执行 curl 命令并捕获响应
-RESPONSE=$(curl -k -w "\nHTTP_CODE:%{http_code}" "https://$DOMAIN/$BASENAME?token=$TOKEN&b64=$BASE64_TEXT")
+# 执行 curl 命令并捕获响应和状态码
+# 使用 --silent (-s), --show-error (-S), 和 --write-out (-w) 来捕获 HTTP 状态码
+HTTP_RESPONSE=$(curl -k -sS -w "\n%{http_code}" "https://$DOMAIN/$BASENAME?token=$TOKEN&b64=$BASE64_TEXT")
 
 # 分离 HTTP 响应体和状态码
-HTTP_BODY=$(echo "$RESPONSE" | sed -n '/HTTP_CODE:/q;p')
-HTTP_CODE=$(echo "$RESPONSE" | grep -oP '(?<=HTTP_CODE:)[0-9]+')
+HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed '$d')
+HTTP_CODE=$(echo "$HTTP_RESPONSE" | tail -n1)
 
 # 打印 HTTP 响应体和状态码
 echo "HTTP 响应体: $HTTP_BODY"
@@ -34,3 +35,4 @@ if [ "$HTTP_CODE" -eq 200 ]; then
 else
   echo "更新失败，状态码: $HTTP_CODE"
 fi
+
